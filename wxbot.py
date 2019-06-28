@@ -28,9 +28,9 @@ def note_group(msg):
 
     if u'加入了群聊' in msg.text and u'邀请' in msg.text:
         add_group(msg)
-    if u'加入群聊' in msg.text and u'通过扫描' in msg.text:
+    elif u'加入群聊' in msg.text and u'通过扫描' in msg.text:
         add_group2(msg)
-    if u'修改群名为' in msg.text:
+    elif u'修改群名为' in msg.text:
         update_group(msg)
 
 def update_group(msg):
