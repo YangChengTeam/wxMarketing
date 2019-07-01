@@ -109,7 +109,7 @@ def auto_replay(msg):
         for inviteInfo in inviteInfos:
             exist = False
             for member in msg.chat:
-                if re.sub(r'<.*?>', '', inviteInfo.invitee_name).replace('?', '') in member.name:
+                if re.sub(r'<.*?>', '', inviteInfo.invitee_name).replace('?', '') in member.name.replace('?', ''):
                     exist = True
             if not exist:
                 invite_effect_count = invite_effect_count - 1
@@ -134,6 +134,5 @@ def my_invite_info(name, rank, invite_total_count, invite_effect_count):
 邀请总数: {invite_total_count}
 有效邀请: {invite_effect_count}
 """.format(name=name, rank=rank, invite_total_count=invite_total_count, invite_effect_count = invite_effect_count)
-
 
 embed()

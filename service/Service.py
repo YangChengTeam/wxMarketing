@@ -221,9 +221,9 @@ def getRankInfo_Service(group_puid, group_name, inviter_name):
 
 # get group and member infos
 def addGroupMemberInfos_Service(bot):
-    for group in bot.groups:
+    for group in bot.groups():
         Service.addGroupInfo(group.puid, group.name)
-        for member in group:
+        for member in group.members:
             Service.addMemberInfo(group.puid, group.name, member.name,
                                   member.puid, 0, '', '')
 
