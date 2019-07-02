@@ -12,11 +12,21 @@ if __name__ == '__main__':
     xiaoi = XiaoI('open_dGb1rXs7IF71', 'VespFeqKuc3B7hQQRjhV')
     xiaoi.url = "http://robot.open.xiaoi.com/ask.do"
 
-# filter
+# filter some group name
 def is_owner(msg):
     if u'武汉抢购' in msg.chat.name:
         return True
     return False
+
+# strip emoji
+def strip_emoji(text):
+    try:
+        highpoints = re.compile(u'[\U00010000-\U0010ffff]')
+    except re.error:
+        highpoints = re.compile(u'[\uD800-\uDBFF][\uDC00-\uDFFF]')
+ 
+    resovle_value = highpoints.sub(u'', text)
+    return resovle_value
 
 # 加入了群聊
 @bot.register(Group, NOTE)
@@ -92,14 +102,15 @@ def auto_replay(msg):
     if u'我的邀请' == msg.text:
         msg.chat.update_group()
 
+        name = strip_emoji(name).replace('?', '')
+        print name
+        
         rankInfo = Service.getRankInfo_Service(msg.chat.puid, group_name, name)
         rank = rankInfo[0]
         inviteInfos = rankInfo[1]
 
         invite_total_count = len(inviteInfos)
         invite_effect_count = invite_total_count
-
-        print inviteInfos
 
         if invite_total_count == 0 and invite_effect_count == 0:
             rank = u'暂无排名'
@@ -109,7 +120,7 @@ def auto_replay(msg):
         for inviteInfo in inviteInfos:
             exist = False
             for member in msg.chat:
-                if re.sub(r'<.*?>', '', inviteInfo.invitee_name).replace('?', '') in member.name.replace('?', ''):
+                if re.sub(r'<.*?>', '', inviteInfo.invitee_name).replace('?', '') in member.name:
                     exist = True
             if not exist:
                 invite_effect_count = invite_effect_count - 1
@@ -123,9 +134,9 @@ def auto_replay(msg):
         name = msg.text.split('-')[1]
         count = Service.updateInviteInfo(msg.chat.puid, group_name, name)
         return u'操作结果: {0}'.format(u'成功' if count > 0 else u'失败')
-    else:
-        if msg.is_at:
-            xiaoi.do_reply(msg)
+    # else:
+    #     if msg.is_at:
+    #         xiaoi.do_reply(msg)
 
 def my_invite_info(name, rank, invite_total_count, invite_effect_count):
     return u"""@{name}

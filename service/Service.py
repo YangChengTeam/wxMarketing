@@ -11,6 +11,8 @@ import time
 import datetime
 import calendar
 
+import re
+
 from sqlalchemy import extract
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -163,6 +165,8 @@ def updateInviteInfo(group_puid, group_name, inviter_name):
 # service
 def addInviteInfo_Service(group_puid, group_name, inviter_name, invitee_name):
     if len(getInviteInfo2(group_puid, group_name, invitee_name)) == 0:
+        inviter_name = re.sub(r'<.*?>', '', inviter_name).replace('?', '')
+        invitee_name = re.sub(r'<.*?>', '', invitee_name).replace('?', '')
         addInviteInfo(group_puid, group_name, inviter_name, invitee_name)
 
 
@@ -203,7 +207,7 @@ def punchInfoRecord_Service(group_puid, group_name, nick_name, user_puid):
         else:
             break
     return u"""@{nick_name}
-本月一共{mdays}天，以打卡{m}天，以连续签到{n}天。""".format(nick_name=nick_name,
+本月一共{mdays}天，已打卡{m}天，已连续签到{n}天。""".format(nick_name=nick_name,
                                           mdays=mdays,
                                           m=m,
                                           n=n)
