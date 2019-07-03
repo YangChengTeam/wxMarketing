@@ -3,4 +3,4 @@
 *.pkl
 *.pyc
 test.py
-fix.py
+fix.sql
