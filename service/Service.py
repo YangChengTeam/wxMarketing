@@ -1,4 +1,6 @@
+#! /usr/bin/python
 # -*- coding: utf-8 -*-
+
 from model.InviteInfo import InviteInfo
 from model.GroupInfo import GroupInfo
 from model.MemberInfo import MemberInfo
@@ -11,12 +13,13 @@ import time
 import datetime
 import calendar
 
-import re
-
 from sqlalchemy import extract
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import or_
+from sqlalchemy import exc
+
+import time
 
 engine = create_engine(
     "mysql+mysqlconnector://root:123456@localhost/wxinfo?charset=utf8mb4")
@@ -33,16 +36,34 @@ def addInviteInfo(group_puid, group_name, inviter_name, invitee_name):
                             invitee_name=invitee_name,
                             addtime=int(time.time()))
     mySession.add(inviteInfo)
-    mySession.commit()
-    mySession.close()
+
+    value = True
+    try:
+        mySession.commit()
+    except exc.SQLAlchemyError as e:
+        value = False
+    else:
+        mySession.close()
+
+    return value
+    
+    
 
 
 def addGroupInfo(group_puid, group_name):
     mySession = session()
     groupInfo = GroupInfo(group_puid=group_puid, group_name=group_name)
     mySession.add(groupInfo)
-    mySession.commit()
-    mySession.close()
+    
+    value = True
+    try:
+        mySession.commit()
+    except exc.SQLAlchemyError as e:
+        value = False
+    else:
+        mySession.close()
+
+    return value
 
 
 def addMemberInfo(group_puid, group_name, nick_name, user_puid, age, city,
@@ -56,8 +77,16 @@ def addMemberInfo(group_puid, group_name, nick_name, user_puid, age, city,
                             city=city,
                             sex=sex)
     mySession.add(memberInfo)
-    mySession.commit()
-    mySession.close()
+
+    value = True
+    try:
+        mySession.commit()
+    except exc.SQLAlchemyError as e:
+        value = False
+    else:
+        mySession.close()
+        
+    return value
 
 
 def addPunchInfo(group_puid, group_name, nick_name, user_puid):
@@ -67,8 +96,16 @@ def addPunchInfo(group_puid, group_name, nick_name, user_puid):
                           nick_name=nick_name,
                           user_puid=user_puid)
     mySession.add(punchInfo)
-    mySession.commit()
-    mySession.close()
+    
+    value = True
+    try:
+        mySession.commit()
+    except exc.SQLAlchemyError as e:
+        value = False
+    else:
+        mySession.close()
+        
+    return value
 
 
 def getPunchInfo(group_puid, group_name, nick_name, user_puid):
@@ -164,10 +201,12 @@ def updateInviteInfo(group_puid, group_name, inviter_name):
 
 # service
 def addInviteInfo_Service(group_puid, group_name, inviter_name, invitee_name):
-    if len(getInviteInfo2(group_puid, group_name, invitee_name)) == 0:
-        inviter_name = re.sub(r'<.*?>', '', inviter_name).replace('?', '')
-        invitee_name = re.sub(r'<.*?>', '', invitee_name).replace('?', '')
-        addInviteInfo(group_puid, group_name, inviter_name, invitee_name)
+    if len(getInviteInfo2(group_puid, group_name, invitee_name)) == 0: 
+        value = addInviteInfo(group_puid, group_name, inviter_name, invitee_name)
+        if not value:
+            time.sleep( 0.2 )
+            print u"{0}-{1}-{2}-{3}插入失败".format(group_puid, group_name, inviter_name, invitee_name)
+            addInviteInfo_Service(group_puid, group_name, inviter_name, invitee_name)
 
 
 def addPunchInfo_Service(group_puid, group_name, nick_name, user_puid):
@@ -177,11 +216,14 @@ def addPunchInfo_Service(group_puid, group_name, nick_name, user_puid):
         if len(punchInfos) > 0:
             punchInfo = punchInfos[0]
             date1 = punchInfo.addtime.strftime('%Y-%m-%d')
-            date2 = datetime.datetime.now()
             if date1 == date2.strftime('%Y-%m-%d'):
                 return u'已经打过卡了~'
-        addPunchInfo(group_puid, group_name, nick_name, user_puid)
-        return u'打卡成功'
+        value = addPunchInfo(group_puid, group_name, nick_name, user_puid)
+
+        if value:
+            return u'打卡成功'
+        else:
+            return u'打卡失败，请重试'
 
     else:
         return u'不在打卡范围内，打卡时间为早上8点—10点~'

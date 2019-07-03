@@ -30,9 +30,13 @@ insert into invite_info(group_name, inviter_name, invitee_name, addtime, group_p
 insert into invite_info(group_name, inviter_name, invitee_name, addtime, group_puid) values('武汉抢购11群', '鱻宝宝Ooo', 'Jessie', '1561976563', '4576fd8e');
 
 insert into invite_info(group_name, inviter_name, invitee_name, addtime, group_puid) values('武汉抢购11群', '鱻宝宝Ooo', 'q', '1561976563', '4576fd8e');
+insert into invite_info(group_name, inviter_name, invitee_name, addtime, group_puid) values('武汉抢购11群', '鱻宝宝Ooo', '远方', '1561976563', '4576fd8e');
+insert into invite_info(group_name, inviter_name, invitee_name, addtime, group_puid) values('武汉抢购11群', 'Soulღ', '橙', '1561976563', '4576fd8e');
 
 
+insert into invite_info(group_name, inviter_name, invitee_name, addtime, group_puid) values('武汉抢购10群', '陈媛', '范大君', '1562038183', '780b26a4');
+insert into invite_info(group_name, inviter_name, invitee_name, addtime, group_puid) values('武汉抢购10群', '陈媛', 'FANG', '1562038183', '780b26a4');
+insert into invite_info(group_name, inviter_name, invitee_name, addtime, group_puid) values('武汉抢购10群', '陈媛', '狐狸', '1562038183', '780b26a4');
 
-insert into invite_info(group_name, inviter_name, invitee_name, addtime, group_puid) values('武汉抢购11群', '一轮明月', '老游', '1561976563', '4576fd8e');
 
-
+insert into punch_info(group_name, nick_name, addtime, group_puid) values('武汉抢购10群', '迦叶', 'ee3e46af', '4576fd8e');

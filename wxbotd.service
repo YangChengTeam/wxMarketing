@@ -1,0 +1,13 @@
+[Unit]
+Description=wxbotd server daemon
+After=network.target
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/codes/wxpy/
+ExecStart=/usr/bin/python /var/codes/wxpy/wxbot.py
+
+[Install]
+WantedBy=multi-user.target
